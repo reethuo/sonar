@@ -1,3 +1,5 @@
+package com.mycompany.app;
+
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
@@ -10,6 +12,7 @@ public class App {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8082), 0);
         server.createContext("/", new HelloHandler());
+        server.setExecutor(null); // creates a default executor
         server.start();
         System.out.println("Server started on port 8082");
     }
