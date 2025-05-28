@@ -49,7 +49,7 @@
       <configuration>
         <archive>
           <manifest>
-            <mainClass>com.mycompany.app.App</mainClass>
+            <mainClass>App</mainClass>
           </manifest>
         </archive>
       </configuration>
