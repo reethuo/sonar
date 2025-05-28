@@ -11,6 +11,12 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(MESSAGE);
+        try {
+        // Keep the app alive for demonstration purposes
+        Thread.sleep(Long.MAX_VALUE);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+    }
     }
 
     public String getMessage() {
