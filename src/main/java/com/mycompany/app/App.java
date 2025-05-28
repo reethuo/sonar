@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-public class App {
+public class BrokenApp{//App {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8082), 0);
         server.createContext("/", new HelloHandler());
