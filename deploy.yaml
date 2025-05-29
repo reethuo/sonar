@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: my-app
-          image: reethu2/java:v6
+          image: reethu2/java:v7
           ports:
             - containerPort: 8082
           
