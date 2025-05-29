@@ -19,9 +19,4 @@ spec:
           image: reethu2/java:v6
           ports:
             - containerPort: 8082
-          readinessProbe:
-            httpGet:
-              path: /nonexistent  # Intentionally wrong path to trigger failure
-              port: 8082
-            initialDelaySeconds: 5
-            periodSeconds: 5
+          
