@@ -1,0 +1,70 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install prerequisite tools
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+          - wget
+          - git
+          - python3
+          - python3-pip
+        state: present
+        update_cache: true
+
+    - name: Add Docker's official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        state: present
+        filename: docker
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Download harness-docker-runner binary
+      shell: |
+        if [ ! -f /usr/local/bin/harness-docker-runner ]; then
+          curl -L https://github.com/harness/harness-docker-runner/releases/download/v0.1.18/drone-docker-runner-linux-amd64 -o /usr/local/bin/harness-docker-runner
+          chmod +x /usr/local/bin/harness-docker-runner
+        fi
+
+    - name: Stop and remove all running/stopped containers (if any)
+      shell: |
+        docker ps -aq | xargs --no-run-if-empty docker rm -f
+      ignore_errors: true
+
+    - name: Run Harness Delegate container
+      shell: |
+        docker run  -d --cpus=1 --memory=2g \
+          -e DELEGATE_NAME=docker-reethu \
+          -e NEXT_GEN="true" \
+          -e DELEGATE_TYPE="DOCKER" \
+          -e ACCOUNT_ID=ucHySz2jQKKWQweZdXyCog \
+          -e DELEGATE_TOKEN=NTRhYTY0Mjg3NThkNjBiNjMzNzhjOGQyNjEwOTQyZjY= \
+          -e DELEGATE_TAGS="" \
+          -e MANAGER_HOST_AND_PORT=https://app.harness.io us-docker.pkg.dev/gar-prod-setup/harness-public/harness/delegate:25.07.86401
+
+    - name: Run harness-docker-runner in background
+      shell: nohup /usr/local/bin/harness-docker-runner server > /var/log/harness-runner.log 2>&1 &
